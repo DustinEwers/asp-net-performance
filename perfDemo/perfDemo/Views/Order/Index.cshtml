@@ -1,0 +1,59 @@
+﻿@model perfDemo.Controllers.OrderSearchCriteriaViewModel
+
+@{
+    ViewBag.Title = "Customer Order Search";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="row">
+    <div class="col-md-3">
+        @using (Html.BeginForm("Index", "Order", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label for="@Html.IdFor(x => x.CustomerId)">Customer</label>
+                @Html.DropDownListFor(x => x.CustomerId, Model.CustomerOptions, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.CustomerId)
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+        }
+    </div>
+</div>
+<br />
+@if (Model.Orders != null && Model.Orders.Any())
+{
+    foreach (var order in Model.Orders)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">Order Number: @order.OrderNumber</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-6">
+
+                        <br />
+                        Shipping: @order.Shipping
+                        <br />
+                        Subtotal: @order.SubTotal
+                        <br />
+                        Tax: @order.Tax
+                        <br />
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Order Lines</h4>
+                        @foreach (var line in order.OrderLines)
+                        {
+                            <div class="row">
+                                <div class="col-md-12">
+                                    @line.Product.Name
+                                    @line.Product.Price
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+}
