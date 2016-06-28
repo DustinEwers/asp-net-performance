@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace perfDemo.Models
 {
@@ -13,5 +14,25 @@ namespace perfDemo.Models
         [MaxLength(5000)]
         public string Description { get; set; }
         public decimal Price { get; set; }
+
+        public virtual ICollection<ProductOption> ProductOptions { get; set; }
+    }
+
+    public class ProductOption
+    {
+        public int Id { get; set; }
+        public int ProductId { get; set; }
+
+        public ProductOptionType Type { get; set; }
+
+        public string Value { get; set; }
+        
+        public virtual  Product Product { get; set; }
+    }
+
+    public enum ProductOptionType
+    {
+        Color, 
+        Size,
     }
 }

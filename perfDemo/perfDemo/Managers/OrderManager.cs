@@ -24,17 +24,20 @@ namespace perfDemo.Managers
             _dbContext = new ApplicationDbContext();
         }
 
-        //public List<Order> GetOrdersForCustomer(int customerId)
-        //{
-        //    return _dbContext.Set<Order>()
-        //        .Where(x => x.CustomerId == customerId)
-        //        .Include(x => x.Customer)
-        //        .Include(x => x.OrderLines)
-        //        .Include(x => x.OrderLines.Select(y => y.Product))
-        //        .ToList();
-        //}
-
+        // This is what *not* to do
         public List<Order> GetOrdersForCustomer(int customerId)
+        {
+            return _dbContext.Set<Order>()
+                .Where(x => x.CustomerId == customerId)
+                .Include(x => x.Customer)
+                .Include(x => x.OrderLines)
+                .Include(x => x.OrderLines.Select(y => y.Product))
+                .Include(x=> x.OrderLines.Select(y=>y.Product.ProductOptions))
+                .ToList();
+        }
+
+        // This is better. Generates less SQL and runs faster. 
+        public List<Order> GetOrdersForCustomerFaster(int customerId)
         {
             var orders =  _dbContext.Set<Order>()
                 .Where(x => x.CustomerId == customerId)

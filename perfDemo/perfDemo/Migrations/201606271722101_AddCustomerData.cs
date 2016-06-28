@@ -1,6 +1,5 @@
 namespace perfDemo.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
     
     public partial class AddCustomerData : DbMigration
@@ -62,16 +61,32 @@ namespace perfDemo.Migrations
                     })
                 .PrimaryKey(t => t.Id);
             
+            CreateTable(
+                "dbo.ProductOptions",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        ProductId = c.Int(nullable: false),
+                        Type = c.Int(nullable: false),
+                        Value = c.String(),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Products", t => t.ProductId, cascadeDelete: true)
+                .Index(t => t.ProductId);
+            
         }
         
         public override void Down()
         {
             DropForeignKey("dbo.OrderLines", "ProductId", "dbo.Products");
+            DropForeignKey("dbo.ProductOptions", "ProductId", "dbo.Products");
             DropForeignKey("dbo.OrderLines", "OrderId", "dbo.Orders");
             DropForeignKey("dbo.Orders", "CustomerId", "dbo.Customers");
+            DropIndex("dbo.ProductOptions", new[] { "ProductId" });
             DropIndex("dbo.OrderLines", new[] { "ProductId" });
             DropIndex("dbo.OrderLines", new[] { "OrderId" });
             DropIndex("dbo.Orders", new[] { "CustomerId" });
+            DropTable("dbo.ProductOptions");
             DropTable("dbo.Products");
             DropTable("dbo.OrderLines");
             DropTable("dbo.Orders");

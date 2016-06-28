@@ -8,17 +8,19 @@ namespace perfDemo.Controllers
     public class OrderController : Controller
     {
         private readonly IOrderManager _manager;
+        private readonly ICustomerManager _customerManager;
 
-        public OrderController(IOrderManager manager)
+        public OrderController(IOrderManager manager, ICustomerManager customerManager)
         {
             _manager = manager;
+            _customerManager = customerManager;
         }
 
         public OrderController()
         {
+            _customerManager = new CustomerManager();
             _manager = new OrderManager();
         }
-
 
         // GET: Order
         public ActionResult Index()
@@ -31,8 +33,12 @@ namespace perfDemo.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Index(OrderSearchCriteriaViewModel criteria)
         {
+            criteria.Customer = _customerManager.GetCustomer(criteria.CustomerId);
+
             var items = _manager.GetOrdersForCustomer(criteria.CustomerId);
             criteria.Orders = items;
+
+            criteria.Customer = _customerManager.GetCustomer(criteria.CustomerId);
 
             return View(criteria);
         }
@@ -49,5 +55,7 @@ namespace perfDemo.Controllers
         };
 
         public List<Order> Orders { get; set; }
+
+        public Customer Customer { get; set; }
     }
 }

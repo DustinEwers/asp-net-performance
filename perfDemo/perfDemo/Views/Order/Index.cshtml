@@ -13,16 +13,18 @@
             @Html.AntiForgeryToken()
             <div class="form-group">
                 <label for="@Html.IdFor(x => x.CustomerId)">Customer</label>
-                @Html.DropDownListFor(x => x.CustomerId, Model.CustomerOptions, new { @class = "form-control" })
+                @Html.DropDownListFor(x => x.CustomerId, Model.CustomerOptions, new {@class = "form-control"})
                 @Html.ValidationMessageFor(x => x.CustomerId)
             </div>
             <button type="submit" class="btn btn-default">Submit</button>
         }
     </div>
 </div>
-<br />
+
 @if (Model.Orders != null && Model.Orders.Any())
 {
+    <h2>Orders</h2>
+
     foreach (var order in Model.Orders)
     {
         <div class="panel panel-default">
