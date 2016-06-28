@@ -3,6 +3,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using StackExchange.Profiling;
 using StackExchange.Profiling.EntityFramework6;
+using StackExchange.Profiling.Mvc;
 
 namespace perfDemo
 {
@@ -10,6 +11,10 @@ namespace perfDemo
     {
         protected void Application_Start()
         {
+            // We Don't need Web Forms in our MVC App.
+            ViewEngines.Engines.Clear();
+            ViewEngines.Engines.Add(new RazorViewEngine());
+
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
