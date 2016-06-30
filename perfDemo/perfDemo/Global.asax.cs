@@ -3,7 +3,6 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using StackExchange.Profiling;
 using StackExchange.Profiling.EntityFramework6;
-using StackExchange.Profiling.Mvc;
 
 namespace perfDemo
 {
