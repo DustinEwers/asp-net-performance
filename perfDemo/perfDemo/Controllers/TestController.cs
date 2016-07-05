@@ -2,10 +2,14 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.Services.Configuration;
+using System.Web.SessionState;
+using perfDemo.Attributes;
 using StackExchange.Profiling;
 
 namespace perfDemo.Controllers
 {
+    //[SessionState(SessionStateBehavior.Disabled)]
     public class TestController : Controller
     {
         private const int NumberOfWorkCycles = 5;
@@ -31,7 +35,7 @@ namespace perfDemo.Controllers
             return View();
         }
 
-        public void AsyncWork(int seconds)
+        private void AsyncWork(int seconds)
         {
             var work = new List<Task>();
 
@@ -44,7 +48,7 @@ namespace perfDemo.Controllers
             Task.WaitAll(work.ToArray());
         }
 
-        public void SyncWork(int seconds)
+        private void SyncWork(int seconds)
         {
             for (var i = 0; i < NumberOfWorkCycles; i++)
             {
@@ -52,14 +56,30 @@ namespace perfDemo.Controllers
             }
         }
         
+        public ActionResult SessionLockTest()
+        {
+            return View();
+        }
+
+        [NoCache]
+        [HttpPost]
+        public JsonResult SomeWork()
+        {
+            Session["foo"] = "bar";
+
+            Thread.Sleep(500);
+            return Json(new {Message = "Boom!"});
+        }
+        
+
         #region "Serializer Test"
         // GET: Test
         //public ActionResult TestSerializer()
         //{
-            
+
         //    return View();
         //}
-        
+
         //public class Foo
         //{
         //    public string Name { get; set; }
@@ -75,7 +95,7 @@ namespace perfDemo.Controllers
         //    public string Color { get; set; }
         //    public Foo Foo { get; set; }
         //}
-        
+
         //public class ComplexEntity
         //{
         //    public List<Foo> Foos { get; set; }
