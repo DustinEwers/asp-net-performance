@@ -25,7 +25,7 @@ namespace perfDemo.Managers
         }
 
         // This is what *not* to do
-        public List<Order> GetOrdersForCustomer(int customerId)
+        public List<Order> GetOrdersForCustomerFail(int customerId)
         {
             return _dbContext.Set<Order>()
                 .Where(x => x.CustomerId == customerId)
@@ -37,7 +37,7 @@ namespace perfDemo.Managers
         }
 
         // This is better. Generates less SQL and runs faster. 
-        public List<Order> GetOrdersForCustomerFaster(int customerId)
+        public List<Order> GetOrdersForCustomer(int customerId)
         {
             var orders =  _dbContext.Set<Order>()
                 .Where(x => x.CustomerId == customerId)

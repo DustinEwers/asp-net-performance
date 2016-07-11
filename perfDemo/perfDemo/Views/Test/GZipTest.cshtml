@@ -1,0 +1,24 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "Gzip Test";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.post("@Url.Action("GZipCompression")",
+                function (data) {
+                    //Do something with data...
+                },"json");
+
+            $.post("@Url.Action("DefaultCompression")",
+                function (data) {
+                    //Do something with data...
+                },"json");
+        });
+    </script>
+}

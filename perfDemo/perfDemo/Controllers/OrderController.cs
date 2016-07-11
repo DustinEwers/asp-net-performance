@@ -38,7 +38,7 @@ namespace perfDemo.Controllers
             var items = _manager.GetOrdersForCustomer(criteria.CustomerId);
             criteria.Orders = items;
 
-            criteria.Customer = _customerManager.GetCustomer(criteria.CustomerId);
+            //criteria.Customer = _customerManager.GetCustomer(criteria.CustomerId);
 
             return View(criteria);
         }
