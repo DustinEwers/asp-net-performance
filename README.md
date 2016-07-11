@@ -1,2 +1,2 @@
 # asp-net-performance
-Samples and slides for ASP.NET Performance
+This is the repo for the slides and demos for Full Stack ASP.NET Performance. 
