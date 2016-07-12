@@ -2,7 +2,6 @@
 using System.Web.Optimization;
 using System.Web.Routing;
 using StackExchange.Profiling;
-using StackExchange.Profiling.EntityFramework6;
 
 namespace perfDemo
 {
@@ -19,7 +18,7 @@ namespace perfDemo
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            MiniProfilerEF6.Initialize();
+            //MiniProfilerEF6.Initialize();
         }
 
         protected void Application_BeginRequest()

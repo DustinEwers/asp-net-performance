@@ -9,7 +9,7 @@ using StackExchange.Profiling;
 
 namespace perfDemo.Controllers
 {
-    [SessionState(SessionStateBehavior.Disabled)]
+    //[SessionState(SessionStateBehavior.Disabled)]
     public class TestController : Controller
     {
         private const int NumberOfWorkCycles = 5;
