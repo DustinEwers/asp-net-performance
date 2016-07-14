@@ -2,12 +2,13 @@
 using System.Data.Entity;
 using System.Linq;
 using perfDemo.Models;
+using System.Threading.Tasks;
 
 namespace perfDemo.Managers
 {
     public interface ICustomerManager
     {
-        Customer GetCustomer(int id);
+        Task<Customer> GetCustomerAsync(int id);
     }
 
     public class CustomerManager: ICustomerManager
@@ -24,9 +25,9 @@ namespace perfDemo.Managers
             _dbContext = new ApplicationDbContext();
         }
         
-        public Customer GetCustomer(int id)
+        public async Task<Customer> GetCustomerAsync(int id)
         {
-            return _dbContext.Set<Customer>().FirstOrDefault(x => x.Id == id);
+            return await _dbContext.Set<Customer>().FirstOrDefaultAsync(x => x.Id == id);
         }
     }
 }

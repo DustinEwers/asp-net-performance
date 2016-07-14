@@ -2,12 +2,14 @@
 using System.Linq;
 using perfDemo.Models;
 using System.Data.Entity;
+using System.Threading.Tasks;
 
 namespace perfDemo.Managers
 {
     public interface IOrderManager
     {
         List<Order> GetOrdersForCustomer(int customerId);
+        Task<List<Order>> GetOrdersForCustomerAsync(int customerId);
     }
 
     public class OrderManager : IOrderManager
@@ -25,21 +27,21 @@ namespace perfDemo.Managers
         }
 
         // This is what *not* to do
-        public List<Order> GetOrdersForCustomerFail(int customerId)
+        public List<Order> GetOrdersForCustomer(int customerId)
         {
             return _dbContext.Set<Order>()
                 .Where(x => x.CustomerId == customerId)
                 .Include(x => x.Customer)
                 .Include(x => x.OrderLines)
                 .Include(x => x.OrderLines.Select(y => y.Product))
-                .Include(x=> x.OrderLines.Select(y=>y.Product.ProductOptions))
+                .Include(x => x.OrderLines.Select(y => y.Product.ProductOptions))
                 .ToList();
         }
 
         // This is better. Generates less SQL and runs faster. 
-        public List<Order> GetOrdersForCustomer(int customerId)
+        public async Task<List<Order>> GetOrdersForCustomerAsync(int customerId)
         {
-            var orders =  _dbContext.Set<Order>()
+            var orders =  await _dbContext.Set<Order>()
                 .Where(x => x.CustomerId == customerId)
                 .Select(x =>
                     new
@@ -53,7 +55,7 @@ namespace perfDemo.Managers
                             Product = new {Name = y.Product.Name}
                         })
                     }
-                ).ToList();
+                ).ToListAsync();
                                 
                 // You can also just map this directly to a view model or other non-entity object 
                 return orders.Select(x =>

@@ -4,6 +4,7 @@ using perfDemo.Models;
 
 namespace perfDemo.Migrations
 {
+    using System.Data.Entity;
     using System.Data.Entity.Migrations;
 
     internal sealed class Configuration : DbMigrationsConfiguration<ApplicationDbContext>
@@ -11,6 +12,7 @@ namespace perfDemo.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
+            Database.SetInitializer(new CreateDatabaseIfNotExists<ApplicationDbContext>());
         }
 
         protected override void Seed(ApplicationDbContext context)

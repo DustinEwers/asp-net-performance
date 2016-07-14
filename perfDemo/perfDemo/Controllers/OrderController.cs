@@ -2,6 +2,7 @@
 using System.Web.Mvc;
 using perfDemo.Managers;
 using perfDemo.Models;
+using System.Threading.Tasks;
 
 namespace perfDemo.Controllers
 {
@@ -31,15 +32,14 @@ namespace perfDemo.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Index(OrderSearchCriteriaViewModel criteria)
+        public async Task<ActionResult> Index(OrderSearchCriteriaViewModel criteria)
         {
-            criteria.Customer = _customerManager.GetCustomer(criteria.CustomerId);
-
+            criteria.Customer = await _customerManager.GetCustomerAsync(criteria.CustomerId);
+            
             var items = _manager.GetOrdersForCustomer(criteria.CustomerId);
+            //var items = await _manager.GetOrdersForCustomerAsync(criteria.CustomerId);
             criteria.Orders = items;
-
-            //criteria.Customer = _customerManager.GetCustomer(criteria.CustomerId);
-
+            
             return View(criteria);
         }
     }

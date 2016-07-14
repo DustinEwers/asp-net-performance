@@ -17,45 +17,34 @@ namespace perfDemo.Controllers
         
         public ActionResult TestAsync()
         {
-
             var profiler = MiniProfiler.Current; // it's ok if this is null
             using (profiler.Step("Making Calls"))
             {
                 using (profiler.Step("Async Work"))
                 {
-                    AsyncWork(SleepTime);
+                    var work = new List<Task>();
+
+                    for (var i = 0; i < NumberOfWorkCycles; i++)
+                    {
+                        var task = Task.Run(() => Thread.Sleep(SleepTime));
+                        work.Add(task);
+                    }
+                    
+                    Task.WaitAll(work.ToArray());
                 }
 
                 using (profiler.Step("Sync Work"))
                 {
-                    SyncWork(SleepTime);
+                    for (var i = 0; i < NumberOfWorkCycles; i++)
+                    {
+                        Thread.Sleep(SleepTime);
+                    }
                 }
             }
 
             return View();
         }
-
-        private void AsyncWork(int seconds)
-        {
-            var work = new List<Task>();
-
-            for (var i = 0; i < NumberOfWorkCycles; i++)
-            {
-                var task = Task.Run(() => Thread.Sleep(seconds));
-                work.Add(task);
-            }
-
-            Task.WaitAll(work.ToArray());
-        }
-
-        private void SyncWork(int seconds)
-        {
-            for (var i = 0; i < NumberOfWorkCycles; i++)
-            {
-                Thread.Sleep(seconds);
-            }
-        }
-        
+                
         public ActionResult SessionLockTest()
         {
             return View();
