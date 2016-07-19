@@ -5,3 +5,35 @@
 }
 
 <h2>@ViewBag.Title</h2>
+<div id="responseContainer" class="row">
+
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            SomeWork("@Url.Action("SyncWork")", "Sync Work");
+            SomeWork("@Url.Action("AsyncWork")", "Parallel Work");
+            SomeWork("@Url.Action("AwaitWork")", "Await Work");
+        });
+
+        function AddResponse(title, time) {
+            var container = $("#responseContainer");
+            container.append("<div class='alert alert-info col-md-4' role='alert'>" + title + ": " + time + " ms</div><div class='clearfix'></div>");
+        }
+
+        function SomeWork(url, title) {
+            var start = moment();
+
+            $.post(url,
+            function (data) {
+                var end = moment();
+                var time = moment.duration(end.diff(start)).asMilliseconds();
+                AddResponse(title, time);
+            },"json");
+        }
+
+    </script>
+}

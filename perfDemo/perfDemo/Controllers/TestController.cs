@@ -2,10 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using System.Web.Services.Configuration;
-using System.Web.SessionState;
 using perfDemo.Attributes;
-using StackExchange.Profiling;
 
 namespace perfDemo.Controllers
 {
@@ -14,37 +11,56 @@ namespace perfDemo.Controllers
     {
         private const int NumberOfWorkCycles = 5;
         private const int SleepTime = 250;
-        
+
+        #region "Async / Parallel Test"
         public ActionResult TestAsync()
         {
-            var profiler = MiniProfiler.Current; // it's ok if this is null
-            using (profiler.Step("Making Calls"))
-            {
-                using (profiler.Step("Async Work"))
-                {
-                    var work = new List<Task>();
-
-                    for (var i = 0; i < NumberOfWorkCycles; i++)
-                    {
-                        var task = Task.Run(() => Thread.Sleep(SleepTime));
-                        work.Add(task);
-                    }
-                    
-                    Task.WaitAll(work.ToArray());
-                }
-
-                using (profiler.Step("Sync Work"))
-                {
-                    for (var i = 0; i < NumberOfWorkCycles; i++)
-                    {
-                        Thread.Sleep(SleepTime);
-                    }
-                }
-            }
-
             return View();
         }
-                
+
+        [NoCache]
+        [HttpPost]
+        public JsonResult AsyncWork() {
+            var work = new List<Task>();
+
+            for (var i = 0; i < NumberOfWorkCycles; i++)
+            {
+                var task = Task.Run(() => Thread.Sleep(SleepTime));
+                work.Add(task);
+            }
+
+            Task.WaitAll(work.ToArray());
+            return Json(new { Message = "Boom!" });
+        }
+
+        [NoCache]
+        [HttpPost]
+        public async Task<JsonResult> AwaitWork()
+        {
+            for (var i = 0; i < NumberOfWorkCycles; i++)
+            {
+                await Work();
+            }
+            
+            return Json(new { Message = "Boom!" });
+        }
+
+        [NoCache]
+        [HttpPost]
+        public JsonResult SyncWork() {
+            for (var i = 0; i < NumberOfWorkCycles; i++)
+            {
+                Thread.Sleep(SleepTime);
+            }
+
+            return Json(new { Message = "Boom!" });
+        }
+
+        private async Task Work() {
+            await Task.Run(() => Thread.Sleep(SleepTime));
+        }
+        #endregion
+
         public ActionResult SessionLockTest()
         {
             return View();

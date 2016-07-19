@@ -5,20 +5,58 @@
 }
 
 <h2>@ViewBag.Title</h2>
+<div id="responseContainer" class="row">
+</div>
 
 @section scripts
 {
     <script type="text/javascript">
-        $(document).ready(function () {
+        $(document).ready(function (){ 
+
+            var gzip = 0;
+            var def = 0;
+
             $.post("@Url.Action("GZipCompression")",
-                function (data) {
-                    //Do something with data...
+                function (data, status, request) {
+                    var contentsize = request.getResponseHeader("Content-Length");
+                    gzip = contentsize;
+                    AddResponse("GZip Compression Size: ", contentsize);
+                    addSavingsMessage(); // not sure which one will finish first
                 },"json");
 
             $.post("@Url.Action("DefaultCompression")",
-                function (data) {
-                    //Do something with data...
-                },"json");
+                function (data, status, request) {
+                    var contentsize = request.getResponseHeader("Content-Length");
+                    def = contentsize;
+                    AddResponse("Default Compression Size: ", contentsize);
+                    addSavingsMessage(); // not sure which one will finish first
+                }, "json");
+
+            function addSavingsMessage() {
+                if (gzip <= 0 || def <= 0) {
+                    return;
+                }
+
+                var diff = def - gzip;
+                var difference = Round(diff / def, 2); // Assumes default is higher, which it is...
+
+                var container = $("#responseContainer");
+                container.append("<div class='alert alert-warning col-md-5' role='alert'>Request size savings: " + difference * 100 + "% </div><div class='clearfix'></div>");
+            }
         });
+
+        function AddResponse(title, size) {
+            var container = $("#responseContainer");
+            container.append("<div class='alert alert-info col-md-5' role='alert'>" + title + size + "</div><div class='clearfix'></div>");
+        }
+
+        // Why this isn't in JavaScript is anyone's guess...
+        function Round(number, digits) {
+            var mul = 10 ^ digits;
+            var ret = number * mul;
+            ret = Math.round(ret);
+            ret = ret / mul;
+            return ret;
+        }
     </script>
 }
